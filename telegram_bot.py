@@ -1,6 +1,7 @@
 import requests
 import json
 import datetime
+import os
 
 import dev_tools
 
@@ -133,15 +134,26 @@ class RobotoJr_bot:
 
 # ----------------------------------------------------
 
-with open("config_bot.json") as f:
-    config = json.load(f)
+is_prod = os.environ.get('IS_HEROKU', None)
 
-token = config['telegram_token']
-timer = config['timer_dev']
-debug = config['debug']
+if is_prod:
+    token = os.environ.get('telegram_token', None)
+    timer = os.environ.get('timer_dev', None)
+    debug = os.environ.get('debug', None)
 
-user  = config['telegram_user_id']
-bot_id = config['telegram_bot_id']
+    user  = os.environ.get('telegram_user_id', None)
+    bot_id = os.environ.get('telegram_bot_id', None)
+
+else:
+    with open("config_bot.json") as f:
+        config = json.load(f)
+
+    token = config['telegram_token']
+    timer = config['timer_dev']
+    debug = config['debug']
+
+    user  = config['telegram_user_id']
+    bot_id = config['telegram_bot_id']
 
 print("[Setup] - Roboto is initializing...\n")
 bot = RobotoJr_bot()
