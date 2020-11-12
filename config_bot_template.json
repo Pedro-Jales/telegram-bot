@@ -1,0 +1,14 @@
+{
+    "debug":true,
+
+    "telegram_token":"",
+
+    "telegram_bot_id":0, 
+    "telegram_user_id":0,
+
+    "trello_token":"",
+    "trello_key":"",
+
+    "timer_default":100,
+    "timer_dev":10
+}
