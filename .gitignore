@@ -1,5 +1,6 @@
-#config.json
+#.json
 config_bot.json
+keyboard.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
