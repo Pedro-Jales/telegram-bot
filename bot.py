@@ -169,6 +169,8 @@ if is_prod:
     user  = int(os.environ.get('telegram_user_id', None))
     bot_id = int(os.environ.get('telegram_bot_id', None))
 
+    print("port:" + int(os.environ.get('PORT', None)))
+
 else:
     print("[Setup] - Roboto is on local machine")
     with open("config_bot.json") as f:
