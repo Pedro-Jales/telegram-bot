@@ -175,7 +175,7 @@ else:
         config = json.load(f)
 
     token = config['telegram_token']
-    timer = config['timer_dev']
+    timer = config['timer_default']
     debug = config['debug']
 
     user  = config['telegram_user_id']
