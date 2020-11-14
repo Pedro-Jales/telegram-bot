@@ -141,14 +141,12 @@ if is_prod:
     trello_token = os.environ.get('trello_token', None)
     trello_key = os.environ.get('trello_key', None)
 
-"""
 else:
     with open("config_bot.json") as f:
         config = json.load(f)
 
     token = config['trello_token']
     key = config['trello_key']
-"""
 
 bot = Trello_api()
 bot.start()

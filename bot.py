@@ -154,18 +154,20 @@ class RobotoJr_bot:
 
 # ----------------------------------------------------
 
-print("[Setup] - Roboto is initializing...\n")
+print("[Setup] - Roboto is initializing...")
 is_prod = os.environ.get('IS_HEROKU', None)
 
 if is_prod:
+    print("[Setup] - Roboto is on heroku")
     token = os.environ.get('telegram_token', None)
     timer = os.environ.get('timer_dev', None)
     debug = os.environ.get('debug', None)
 
     user  = os.environ.get('telegram_user_id', None)
     bot_id = os.environ.get('telegram_bot_id', None)
-"""
+
 else:
+    print("[Setup] - Roboto is on local machine")
     with open("config_bot.json") as f:
         config = json.load(f)
 
@@ -175,7 +177,6 @@ else:
 
     user  = config['telegram_user_id']
     bot_id = config['telegram_bot_id']
-"""
 
 bot = RobotoJr_bot()
 bot.start()
