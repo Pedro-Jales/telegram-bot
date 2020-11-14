@@ -10,7 +10,6 @@ import dev_tools
 
 import keyboard_bot as inline
 import trello_bot as trello
-import timer_bot as tmr
 
 #All queries to the Telegram Bot API must be served over HTTPS and need to be presented in this form: 
 # https://api.telegram.org/bot<token>/METHOD_NAME. 
