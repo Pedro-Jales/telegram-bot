@@ -138,8 +138,8 @@ class Trello_api:
 is_prod = os.environ.get('IS_HEROKU', None)
 
 if is_prod:
-    trello_token = os.environ.get('trello_token', None)
-    trello_key = os.environ.get('trello_key', None)
+    token = os.environ.get('trello_token', None)
+    key = os.environ.get('trello_key', None)
 
 else:
     with open("config_bot.json") as f:
