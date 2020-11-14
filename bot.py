@@ -164,7 +164,7 @@ if is_prod:
 
     user  = os.environ.get('telegram_user_id', None)
     bot_id = os.environ.get('telegram_bot_id', None)
-
+"""
 else:
     with open("config_bot.json") as f:
         config = json.load(f)
@@ -175,6 +175,7 @@ else:
 
     user  = config['telegram_user_id']
     bot_id = config['telegram_bot_id']
+"""
 
 bot = RobotoJr_bot()
 bot.start()
