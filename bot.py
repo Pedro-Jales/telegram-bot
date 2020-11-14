@@ -3,6 +3,9 @@ import json
 import datetime
 import os
 
+import socket
+import sys
+
 import dev_tools
 
 import keyboard_bot as inline
@@ -170,6 +173,22 @@ if is_prod:
     bot_id = int(os.environ.get('telegram_bot_id', None))
 
     print("port:" + (os.environ.get('PORT', None)))
+
+    host = '0.0.0.0'
+    port = os.environ.get('PORT', None)
+
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    try:
+        s.bind((host, port))
+    except socket.error as e:
+        print(str(e))
+
+    s.listen(5)
+
+    conn, addr = s.accept()
+
+    print('connected to: ' + addr[0] + ':' + str(addr[1]))
 
 else:
     print("[Setup] - Roboto is on local machine")
