@@ -172,10 +172,10 @@ if is_prod:
     user  = int(os.environ.get('telegram_user_id', None))
     bot_id = int(os.environ.get('telegram_bot_id', None))
 
-    print("port:" + (int(os.environ.get('PORT', None))))
+    print("port:" + (os.environ.get('PORT', None)))
 
     host = '0.0.0.0'
-    port = os.environ.get('PORT', None)
+    port = int(os.environ.get('PORT', None))
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
