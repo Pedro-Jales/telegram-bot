@@ -163,11 +163,11 @@ is_prod = os.environ.get('IS_HEROKU', None)
 if is_prod:
     print("[Setup] - Roboto is on heroku")
     token = os.environ.get('telegram_token', None)
-    timer = os.environ.get('timer_dev', None)
+    timer = int(os.environ.get('timer_dev', None))
     debug = os.environ.get('debug', None)
 
-    user  = os.environ.get('telegram_user_id', None)
-    bot_id = os.environ.get('telegram_bot_id', None)
+    user  = int(os.environ.get('telegram_user_id', None))
+    bot_id = int(os.environ.get('telegram_bot_id', None))
 
 else:
     print("[Setup] - Roboto is on local machine")
