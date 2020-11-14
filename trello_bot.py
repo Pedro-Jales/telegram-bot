@@ -1,5 +1,6 @@
 import requests
 import json
+import os
 
 import keyboard_bot as inline
 
@@ -134,11 +135,20 @@ class Trello_api:
 
 #-----------------------------------------------
 
-with open("config_bot.json") as f:
-    config = json.load(f)
+is_prod = os.environ.get('IS_HEROKU', None)
 
-token = config['trello_token']
-key = config['trello_key']
+if is_prod:
+    trello_token = os.environ.get('trello_token', None)
+    trello_key = os.environ.get('trello_key', None)
+
+"""
+else:
+    with open("config_bot.json") as f:
+        config = json.load(f)
+
+    token = config['trello_token']
+    key = config['trello_key']
+"""
 
 bot = Trello_api()
 bot.start()
