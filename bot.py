@@ -30,7 +30,7 @@ class RobotoJr_bot:
 
 # https://api.telegram.org/bot<token>/METHOD_NAME. 
 
-        if (is_prod or True):
+        if (is_prod):
             #requests.get(f"https://api.telegram.org/bot{token}/setWebhook")
             #f"https://api.telegram.org/bot{token}/getWebhookInfo")
 
