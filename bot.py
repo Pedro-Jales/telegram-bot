@@ -24,65 +24,67 @@ class RobotoJr_bot:
 
     #Turn bot online:
     def start(self):
+        print()
         dev_tools.system("[Main] - Roboto is Online!\n")
         update_id = None
 
 # https://api.telegram.org/bot<token>/METHOD_NAME. 
-        """
-        if (is_prod):
-            requests.get(f"https://api.telegram.org/bot{token}/setWebhook")
 
-            while True:
-                message = requests.get(f"https://api.telegram.org/bot{token}/getWebhookInfo")
+        if (is_prod or True):
+            #requests.get(f"https://api.telegram.org/bot{token}/setWebhook")
+            #f"https://api.telegram.org/bot{token}/getWebhookInfo")
 
-                chat_id = message['message']['from']['id']
-                isFirstMessage = message['message']['message_id'] == 1 
 
-                # Create a response 
-                response = self.createResponse(message['message']['text'], isFirstMessage)
+            #   set webhook
+            heroku_link = f"https://roboto-jr.herokuapp.com/{token}"
+            #heroku_link = f"https://roboto-jr.herokuapp.com:{port}/{token}"
+            link = f"https://api.telegram.org/bot{token}/setWebhook?url={heroku_link}"
 
-                # Sent the response if there's a response
-                if(response != None):
-                    self.sentResponse(response, chat_id)   
+            dev_tools.system("[Main] - Setting webhook:")
+            print(link)
+            print(requests.get(link))   #already set
+
+            #another_link = f"https://api.telegram.org/bot{token}/getWebhook"
+            #print(another_link)
+            #print(requests.get(another_link))
 
             pass
 
 
         else:
-        """
-        while True:
-            update = self.getMessages(update_id)
-            messages = update['result']
+            while True:
+                update = self.getMessages(update_id)
+                messages = update['result']
 
-            if messages:
-                for message in messages:
-                    dev_tools.system('[Telegram] - message receveid')
-                    update_id = message['update_id']
+                if messages:
+                    for message in messages:
+                        dev_tools.system('[Telegram] - message receveid')
+                        update_id = message['update_id']
 
-                    # Check if the message is a callback
-                    if('callback_query' in message and message['callback_query']['message']['from']['id'] == bot_id):
-                        self.getCallback_query(message['callback_query']['data'])
-                    
-                    # Check if the message was sent by a verified user
-                    elif(message['message']['from']['id'] != user):   
-                        self.sentResponse("Access denied", message['message']['from']['id'])
-
-                    # Process the message
-                    else:
-                        chat_id = message['message']['from']['id']
-                        isFirstMessage = message['message']['message_id'] == 1 
-
-                        # Create a response 
-                        response = self.createResponse(message['message']['text'], isFirstMessage)
-
-                        # Sent the response if there's a response
-                        if(response != None):
-                            self.sentResponse(response, chat_id)            
-                            
-                    #TODO: check wherever it should be
-                    self.inline = False 
+                        # Check if the message is a callback
+                        if('callback_query' in message and message['callback_query']['message']['from']['id'] == bot_id):
+                            self.getCallback_query(message['callback_query']['data'])
                         
-                    dev_tools.system('[Telegram] - command processed\n')
+                        # Check if the message was sent by a verified user
+                        elif(message['message']['from']['id'] != user):   
+                            self.sentResponse("Access denied", message['message']['from']['id'])
+
+                        # Process the message
+                        else:
+                            chat_id = message['message']['from']['id']
+                            isFirstMessage = message['message']['message_id'] == 1 
+
+                            # Create a response 
+                            response = self.createResponse(message['message']['text'], isFirstMessage)
+
+                            # Sent the response if there's a response
+                            if(response != None):
+                                self.sentResponse(response, chat_id)            
+                                
+                        #TODO: check wherever it should be
+                        self.inline = False 
+                            
+                        dev_tools.system('[Telegram] - command processed\n')
 
     #Long polling
     def getMessages(self, update_id):
@@ -165,6 +167,7 @@ is_prod = os.environ.get('IS_HEROKU', None)
 
 if is_prod:
     print("[Setup] - Roboto is on heroku")
+    
     token = os.environ.get('telegram_token', None)
     timer = int(os.environ.get('timer_dev', None))
     debug = os.environ.get('debug', None)
