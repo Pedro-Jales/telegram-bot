@@ -46,7 +46,7 @@ class RobotoJr_bot:
 
             #another_link = f"https://api.telegram.org/bot{token}/getWebhook"
             #print(another_link)
-            #print(requests.get(another_link))
+            #print(requests.get(another_link)) 
 
             while (True):
                 pass
