@@ -177,6 +177,8 @@ if is_prod:
 
     print("port:" + (os.environ.get('PORT', None)))
 
+    #------------------------------------------
+
     host = '0.0.0.0'
     port = int(os.environ.get('PORT', None))
 
@@ -192,6 +194,8 @@ if is_prod:
     conn, addr = s.accept()
 
     print('connected to: ' + addr[0] + ':' + str(addr[1]))
+
+    #------------------------------------------
 
 else:
     print("[Setup] - Roboto is on local machine")
