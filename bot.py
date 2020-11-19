@@ -36,22 +36,35 @@ class RobotoJr_bot:
 
 
             #   set webhook
-            heroku_link = f"https://roboto-jr.herokuapp.com/{token}"
+            webhook = f"https://roboto-jr.herokuapp.com/{token}"
             #heroku_link = f"https://roboto-jr.herokuapp.com:{port}/{token}"
-            link = f"https://api.telegram.org/bot{token}/setWebhook?url={heroku_link}"
+            link = f"https://api.telegram.org/bot{token}/setWebhook?url={webhook}"
 
             dev_tools.system("[Main] - Setting webhook:")
             print(link)
-            print(requests.get(link))   #already set
+            print(requests.get(link))
 
             #another_link = f"https://api.telegram.org/bot{token}/getWebhook"
             #print(another_link)
             #print(requests.get(another_link))
 
-            pass
+            while (True):
+                pass
 
 
         else:
+            webhook = ""
+            link = f"https://api.telegram.org/bot{token}/setWebhook?url={webhook}"
+
+            rslt = ""
+
+            dev_tools.system("[Main] - Removing webhook:")
+            print(link)
+            rslt = requests.get(link)
+            print(rslt)
+
+            print(json.loads(rslt.content), '\n')
+
             while True:
                 update = self.getMessages(update_id)
                 messages = update['result']
@@ -166,7 +179,7 @@ print("[Setup] - Roboto is initializing...")
 is_prod = os.environ.get('IS_HEROKU', None)
 
 if is_prod:
-    print("[Setup] - Roboto is on heroku")
+    print("[Setup] - Roboto is on heroku.")
     
     token = os.environ.get('telegram_token', None)
     timer = int(os.environ.get('timer_dev', None))
@@ -198,7 +211,7 @@ if is_prod:
     #------------------------------------------
 
 else:
-    print("[Setup] - Roboto is on local machine")
+    print("[Setup] - Roboto is on local machine.")
     with open("config_bot.json") as f:
         config = json.load(f)
 
