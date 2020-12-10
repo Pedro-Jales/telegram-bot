@@ -207,6 +207,7 @@ if is_prod:
     conn, addr = s.accept()
 
     print('connected to: ' + addr[0] + ':' + str(addr[1]))
+    print("port:" + (os.environ.get('PORT', None)))
 
     #------------------------------------------
 
