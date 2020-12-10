@@ -33,24 +33,6 @@ if(os.environ.get('IS_HEROKU', None)):
     bot_id = int(os.environ.get('telegram_bot_id', None))
 
     #----
-
-    host = '0.0.0.0'
-    port = int(os.environ.get('PORT', None))
-
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-    try:
-        s.bind((host, port))
-    except socket.error as e:
-        print(str(e))
-
-    s.listen(5)
-
-    conn, addr = s.accept()
-
-    print('connected to: ' + addr[0] + ':' + str(addr[1]))
-    print("port:" + (os.environ.get('PORT', None)))
-    
     #----
 
 else:
@@ -148,6 +130,25 @@ if(os.environ.get('IS_HEROKU', None)):
         port=PORT, 
         url_path=token)
     updater.bot.set_webhook("https://roboto-jr.herokuapp.com/" + token)
+
+    #----
+
+    host = '0.0.0.0'
+    port = int(os.environ.get('PORT', None))
+
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    try:
+        s.bind((host, port))
+    except socket.error as e:
+        print(str(e))
+
+    s.listen(5)
+
+    conn, addr = s.accept()
+
+    print('connected to: ' + addr[0] + ':' + str(addr[1]))
+    print("port:" + (os.environ.get('PORT', None)))
 
 else:
     updater.start_polling()
