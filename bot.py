@@ -2,6 +2,7 @@ import logging
 import json
 import datetime
 import os
+import socket
 
 from telegram.ext import Updater
 from telegram.ext import CommandHandler
@@ -19,9 +20,54 @@ import dev_tools
 import keyboard_bot as inline
 import trello_bot as trello
 
+#---- Initial ----
+
+if(os.environ.get('IS_HEROKU', None)):
+    print("[Setup] - Roboto is on heroku.")
+
+    token = os.environ.get('telegram_token', None)
+    timer = int(os.environ.get('timer_dev', None))
+    debug = os.environ.get('debug', None)
+
+    user  = int(os.environ.get('telegram_user_id', None))
+    bot_id = int(os.environ.get('telegram_bot_id', None))
+
+    #----
+
+    host = '0.0.0.0'
+    port = int(os.environ.get('PORT', None))
+
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    try:
+        s.bind((host, port))
+    except socket.error as e:
+        print(str(e))
+
+    s.listen(5)
+
+    conn, addr = s.accept()
+
+    print('connected to: ' + addr[0] + ':' + str(addr[1]))
+    print("port:" + (os.environ.get('PORT', None)))
+    
+    #----
+
+else:
+    print("[Setup] - Roboto is on local machine.")
+    with open("config_bot.json") as f:
+        config = json.load(f)
+
+    token = config['telegram_token']
+    timer = config['timer_default']
+    debug = config['debug']
+
+    user  = config['telegram_user_id']
+    bot_id = config['telegram_bot_id']
+
 #---- Default ----
 
-updater = Updater(token='1118423414:AAH_vtFk6aeOOG9eZ-RuQeaRRnics5FnT0w', use_context=True)
+updater = Updater(token=token, use_context=True)
 dispatcher = updater.dispatcher
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -94,32 +140,16 @@ dispatcher.add_handler(CommandHandler('board', board))
 # unknow
 dispatcher.add_handler(MessageHandler(Filters.command, unknown))
 
-#---- Initial ----
-
+#---- Final Config ----
 if(os.environ.get('IS_HEROKU', None)):
-    print("[Setup] - Roboto is on heroku.")
-
-    token = os.environ.get('telegram_token', None)
-    timer = int(os.environ.get('timer_dev', None))
-    debug = os.environ.get('debug', None)
-
-    user  = int(os.environ.get('telegram_user_id', None))
-    bot_id = int(os.environ.get('telegram_bot_id', None))
-
-    #----
-    #----
+    PORT = int(os.environ.get('PORT', '8443'))
+    updater.start_webhook(
+        listen="0.0.0.0", 
+        port=PORT, 
+        url_path=token)
+    updater.bot.set_webhook("https://roboto-jr.herokuapp.com/" + token)
 
 else:
-    print("[Setup] - Roboto is on local machine.")
-    with open("config_bot.json") as f:
-        config = json.load(f)
+    updater.start_polling()
 
-    token = config['telegram_token']
-    timer = config['timer_default']
-    debug = config['debug']
-
-    user  = config['telegram_user_id']
-    bot_id = config['telegram_bot_id']
-
-updater.start_polling()
 updater.idle()
