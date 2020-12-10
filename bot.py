@@ -1,186 +1,104 @@
-import requests
+import logging
 import json
 import datetime
 import os
 
-import socket
-import sys
+from telegram.ext import Updater
+from telegram.ext import CommandHandler
+from telegram.ext import MessageHandler
+from telegram.ext import Filters
+from telegram.ext import InlineQueryHandler
+
+from telegram import InlineQueryResultArticle
+from telegram import InputTextMessageContent
+
+#---- Custom ----
 
 import dev_tools
 
 import keyboard_bot as inline
 import trello_bot as trello
 
-#All queries to the Telegram Bot API must be served over HTTPS and need to be presented in this form: 
-# https://api.telegram.org/bot<token>/METHOD_NAME. 
+#---- Default ----
 
-# Like this for example:
-#https://api.telegram.org/bot123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11/getMe
+updater = Updater(token='1118423414:AAH_vtFk6aeOOG9eZ-RuQeaRRnics5FnT0w', use_context=True)
+dispatcher = updater.dispatcher
 
-class RobotoJr_bot:
-    def __init__(self):
-        self.url_base = f'https://api.telegram.org/bot{token}/'
-        self.inline = False
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
-    #Turn bot online:
-    def start(self):
-        print()
-        dev_tools.system("[Main] - Roboto is Online!\n")
-        update_id = None
+#---- Custom Functions ----
 
-# https://api.telegram.org/bot<token>/METHOD_NAME. 
+def verify(id):
+    if (id == user):
+        return True
 
-        if (is_prod):
-            #requests.get(f"https://api.telegram.org/bot{token}/setWebhook")
-            #f"https://api.telegram.org/bot{token}/getWebhookInfo")
+    return False
 
+def board(update, context):
+    if(verify(update.effective_chat.id)):
+        boards = trello.bot.getAllBoards()
+        response = 'All your boards:\n\n'
 
-            #   set webhook
-            webhook = f"https://roboto-jr.herokuapp.com/{token}"
-            #heroku_link = f"https://roboto-jr.herokuapp.com:{port}/{token}"
-            link = f"https://api.telegram.org/bot{token}/setWebhook?url={webhook}"
+        for board in boards:
+            response = response + board + '\n'
 
-            dev_tools.system("[Main] - Setting webhook:")
-            print(link)
-            print(requests.get(link))
+        context.bot.send_message(chat_id=update.effective_chat.id, text=response)
 
-            #another_link = f"https://api.telegram.org/bot{token}/getWebhook"
-            #print(another_link)
-            #print(requests.get(another_link)) 
+#---- Default Functions -----
 
-            while (True):
-                pass
+def start(update, context):
+    if(verify(update.effective_chat.id)):
+        context.bot.send_message(chat_id=update.effective_chat.id, text="I'm a bot, please talk to me!")
 
+def unknown(update, context):
+    if(verify(update.effective_chat.id)):
+        context.bot.send_message(chat_id=update.effective_chat.id, text="Sorry, I didn't understand that command.")
 
-        else:
-            webhook = ""
-            link = f"https://api.telegram.org/bot{token}/setWebhook?url={webhook}"
+#---- Example Functions ----
 
-            rslt = ""
+def echo(update, context):
+    if(verify(update.effective_chat.id)):
+        context.bot.send_message(chat_id=update.effective_chat.id, text=update.message.text)
 
-            dev_tools.system("[Main] - Removing webhook:")
-            print(link)
-            rslt = requests.get(link)
-            print(rslt)
+def caps(update, context):
+    if(verify(update.effective_chat.id)):
+        text_caps = ' '.join(context.args).upper()
+        context.bot.send_message(chat_id=update.effective_chat.id, text=text_caps)
 
-            print(json.loads(rslt.content), '\n')
+def inline_caps(update, context):
+    if(verify(update.effective_chat.id)):
+        query = update.inline_query.query
+        if not query:
+            return
+        results = list()
+        results.append(
+            InlineQueryResultArticle(
+                id=query.upper(),
+                title='Caps',
+                input_message_content=InputTextMessageContent(query.upper())
+            )
+        )
+        context.bot.answer_inline_query(update.inline_query.id, results)
 
-            while True:
-                update = self.getMessages(update_id)
-                messages = update['result']
+#---- Handlers ----
 
-                if messages:
-                    for message in messages:
-                        dev_tools.system('[Telegram] - message receveid')
-                        update_id = message['update_id']
+# /start
+dispatcher.add_handler(CommandHandler('start', start))
 
-                        # Check if the message is a callback
-                        if('callback_query' in message and message['callback_query']['message']['from']['id'] == bot_id):
-                            self.getCallback_query(message['callback_query']['data'])
-                        
-                        # Check if the message was sent by a verified user
-                        elif(message['message']['from']['id'] != user):   
-                            self.sentResponse("Access denied", message['message']['from']['id'])
+dispatcher.add_handler(MessageHandler(Filters.text & (~Filters.command), echo))
+dispatcher.add_handler(CommandHandler('caps', caps))
+dispatcher.add_handler(InlineQueryHandler(inline_caps))
 
-                        # Process the message
-                        else:
-                            chat_id = message['message']['from']['id']
-                            isFirstMessage = message['message']['message_id'] == 1 
+dispatcher.add_handler(CommandHandler('board', board))
 
-                            # Create a response 
-                            response = self.createResponse(message['message']['text'], isFirstMessage)
+# unknow
+dispatcher.add_handler(MessageHandler(Filters.command, unknown))
 
-                            # Sent the response if there's a response
-                            if(response != None):
-                                self.sentResponse(response, chat_id)            
-                                
-                        #TODO: check wherever it should be
-                        self.inline = False 
-                            
-                        dev_tools.system('[Telegram] - command processed\n')
+#---- Initial ----
 
-    #Long polling
-    def getMessages(self, update_id):
-        source = f'{self.url_base}getUpdates?timeout={timer}'
-
-        if update_id:
-            source = f'{source}&offset={update_id + 1}'
-
-        result = requests.get(source)
-        return json.loads(result.content)
-
-    #Create response
-    def createResponse(self, message, isFirstMessage):
-        dev_tools.system('[Telegram] - creating response')
-
-        if(isFirstMessage): 
-            return 'Hero Worudo'
-
-        elif(message == 'boards'):
-            boards = trello.bot.getAllBoards()
-            response = 'All your boards:\n\n'
-
-            for board in boards:
-                response = response + board + '\n'
-
-            self.inline = True
-
-            return response
-
-        elif(message == 'login'):
-            response = "Login in Trello:"
-
-            inline.initial()
-            inline.addUrl('Login', 'https://trello.com/login')
-            inline.finish()
-
-            self.inline = True
-            return response
-        
-        return 'Hero Worudooo'
-
-    #Sent response
-    def sentResponse(self, response, chat_id):
-        dev_tools.system( '[Telegram] - sending response')
-        
-        link_sent = f'{self.url_base}sendMessage?chat_id={chat_id}&text={response}'
-
-        if self.inline:
-            with open('keyboard.json') as file:
-                keyboard = json.dumps(json.load(file))
-
-                link_sent = f'{self.url_base}sendMessage?chat_id={chat_id}&text={response}&reply_markup={keyboard}'
-
-        if debug:
-            print("[Telegram] -",requests.get(link_sent))
-
-    #get type of callback_query
-    def getCallback_query(self, call):
-        result = call.split(' ')
-
-        prefix = result[0]
-        obj = result[1]
-
-        commands = [
-            ["board", trello.bot.show_board(obj)]
-        ]
-
-        for command in commands:
-            if prefix == command[0]:
-                command[1]
-
-        #if(result[0] == "board"):
-        #    trello.bot.show_board(result[1])
-
-
-# ----------------------------------------------------
-
-print("[Setup] - Roboto is initializing...")
-is_prod = os.environ.get('IS_HEROKU', None)
-
-if is_prod:
+if(os.environ.get('IS_HEROKU', None)):
     print("[Setup] - Roboto is on heroku.")
-    
+
     token = os.environ.get('telegram_token', None)
     timer = int(os.environ.get('timer_dev', None))
     debug = os.environ.get('debug', None)
@@ -188,26 +106,8 @@ if is_prod:
     user  = int(os.environ.get('telegram_user_id', None))
     bot_id = int(os.environ.get('telegram_bot_id', None))
 
-    #------------------------------------------
-
-    host = '0.0.0.0'
-    port = int(os.environ.get('PORT', None))
-
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-    try:
-        s.bind((host, port))
-    except socket.error as e:
-        print(str(e))
-
-    s.listen(5)
-
-    conn, addr = s.accept()
-
-    print('connected to: ' + addr[0] + ':' + str(addr[1]))
-    print("port:" + (os.environ.get('PORT', None)))
-
-    #------------------------------------------
+    #----
+    #----
 
 else:
     print("[Setup] - Roboto is on local machine.")
@@ -221,5 +121,5 @@ else:
     user  = config['telegram_user_id']
     bot_id = config['telegram_bot_id']
 
-bot = RobotoJr_bot()
-bot.start()
+updater.start_polling()
+updater.idle()
