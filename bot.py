@@ -23,7 +23,7 @@ import trello_bot as trello
 #---- Initial ----
 
 if(os.environ.get('IS_HEROKU', None)):
-    print("[Setup] - Roboto is on heroku.")
+    print("[Setup] - Roboto is on heroku!\n")
 
     token = os.environ.get('telegram_token', None)
     timer = int(os.environ.get('timer_dev', None))
@@ -36,7 +36,7 @@ if(os.environ.get('IS_HEROKU', None)):
     #----
 
 else:
-    print("[Setup] - Roboto is on local machine.")
+    print("[Setup] - Roboto is on local machine!\n")
     with open("config_bot.json") as f:
         config = json.load(f)
 

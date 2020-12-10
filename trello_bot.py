@@ -9,7 +9,7 @@ class Trello_api:
         self.url_base = f'https://api.trello.com/1/members/me/'
 
     def start(self):
-        print("[Setup] - Trello connection is Online!")
+        print("\n[Setup] - Trello connection is Online!")
 
     def getAllBoards(self):
         # -- My attemp who kinda worked
